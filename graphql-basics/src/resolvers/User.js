@@ -1,4 +1,4 @@
-const User= {
+const User = {
   posts (parent, args, {db}, info)  {
     console.log('user',parent)
     return db.posts.filter((post) => {
