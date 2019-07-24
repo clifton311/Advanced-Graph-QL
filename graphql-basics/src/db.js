@@ -20,21 +20,21 @@ let users = [
 
 let posts = [
   {
-    id: '101',
+    id: '10',
     title: "Book with Decker",
     body: "Working with decker",
     published: true,
     author: '1'
   },
   {
-    id: '102',
+    id: '11',
     title: "Switch",
     body: "Book about switch places",
     published: true,
     author: '3'
   },
   {
-    id: '103',
+    id: '13',
     title: "Tales of a Gutsy nince",
     body: "Jairay",
     published: false,

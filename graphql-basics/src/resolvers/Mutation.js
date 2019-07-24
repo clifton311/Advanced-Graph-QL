@@ -2,7 +2,6 @@ import uuidv4 from 'uuid/v4';
 
  //Mutations are used for creating, updating data
 const Mutation = {
-
   createUser(parent, args, {db}, info) {
     //args gives access
     const emailTaken = db.users.some((user) => user.email === args.data.email)
@@ -133,6 +132,7 @@ const Mutation = {
     })
     return deleted[0]
   },
+
   updatePost (parent, args, {db}, info) {
     const {data, id} = args;
     //find returns the post element
@@ -159,7 +159,7 @@ const Mutation = {
     return post
   },
  
-  createComment (parent, args, {db}, info) {
+  createComment (parent, args, {db, pubsub}, info) {
     const userExists = db.users.some((user) => {
       return user.id === args.data.author
     })
@@ -170,7 +170,6 @@ const Mutation = {
     if (!userExists || !postExists) {
         throw new Error('User or Post Does not Exist')
     }
-
     const comment = {
       id: uuidv4(),
       // text: args.text,
@@ -178,7 +177,11 @@ const Mutation = {
       // post: args.post
       ...args.data
     }
+
     db.comments.push(comment)
+
+    pubsub.publish(`comment ${args.data.post}`, {comment: comment})
+
     return comment
   },
 
