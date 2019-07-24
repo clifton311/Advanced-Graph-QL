@@ -5,7 +5,8 @@ const  Comment = {
        return user.id === parent.author
      })
   },
-  posts (parent, args, ctx, info) {
+
+  posts (parent, args, {db}, info) {
     return db.posts.find((post) => {
       console.log('post',post)
       return post.id === parent.post

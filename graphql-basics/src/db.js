@@ -50,7 +50,7 @@ let comments = [
     post: '101'
   },
   {
-    id: '5',
+    id: '2',
     text:"Man this is pretty hard!",
     author: '3',
     post:'102'
@@ -62,7 +62,7 @@ let comments = [
     post:'102'
   },
   {
-    id: '4',
+    id: '1',
     text:"I am hungry, I want some Burger King",
     author: '2',
     post:'103'

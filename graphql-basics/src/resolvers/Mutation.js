@@ -54,6 +54,43 @@ const Mutation = {
     return deleted[0];
   },
 
+  updateUser (parent, args, {db}, info) {
+
+    const {data, id} = args;
+    
+    const user = db.users.find((user) => {
+      console.log("args", args)
+      return user.id === args.id
+    })
+
+    if (!user) {
+      throw new Error("User Not Found")
+    }
+
+    //check the type is correct
+    if (typeof data.email === "string") {
+      //verify no other email
+      const emailTaken = db.users.some((user) => {
+        return user.email === data.email
+      })
+
+      if (emailTaken) {
+        throw new Error ("Email Taken")
+      }
+      user.email = data.email
+    }
+
+    if (typeof data.name === 'string') {
+      user.name = data.name
+    }
+
+    if (typeof data.age !== 'undefined') {
+      user.age = data.age
+    }
+
+    return user
+  },
+
   createPost (parent, args, {db}, info) {
     //make sure author ID matches users
     const userExists = db.users.some((user) => user.id === args.data.author)
@@ -81,63 +118,47 @@ const Mutation = {
       console.log("args",args, post.author)
       return post.id === args.id
     })
-
     console.log(postIndex)
     //if post does not exist, throw error
     if (postIndex === -1) {
       throw new Error('Post does not exist')
     }
-    
     //if exists, delete
     const deleted = posts.splice(postIndex,1);
     console.log("deleted", deleted)
 
     //delete comment associated with post
     db.comments = db.comments.filter((comment) => {
-     return comment.post !== args.id
-
-  
+     return comment.post !== args.id  
     })
-
     return deleted[0]
   },
-
-  updateUser (parent, args, {db}, info) {
-
+  updatePost (parent, args, {db}, info) {
     const {data, id} = args;
-    
-    const user = db.users.find((user) => {
-      console.log("args", args)
-      return user.id === args.id
-    })
+    //find returns the post element
+    const post = db.posts.find((post) => post.id === id)
+    console.log(post)
 
-    if (!user) {
-      throw new Error("User Not Found")
+    if (!post) {
+      throw new error('Post does not exist')
     }
 
-    //check the type is correct
-    if (typeof data.email === "string") {
-      //verify no other email
-      const emailTaken = db.users.some((user) => {
-        return user.email === data.email
-      })
-      if (emailTaken) {
-        throw new Error ("Email Taken")
-      }
-      user.email = data.email
+    if (typeof data.title === "string") {
+      console.log(post)
+      post.title = data.title
     }
 
-    if (typeof data.name === 'string') {
-      user.name = data.name
+    if (typeof data.body === "string") {
+      post.body = data.body
     }
 
-    if (typeof data.age !== 'undefined') {
-      user.age = data.age
+    if (typeof data.published === 'boolean') {
+      post.published = data.published
     }
-
-    return user
+  
+    return post
   },
-
+ 
   createComment (parent, args, {db}, info) {
     const userExists = db.users.some((user) => {
       return user.id === args.data.author
@@ -173,6 +194,26 @@ const Mutation = {
     let deleted = db.comments.splice(commmentIndex,1)
 
     return deleted[0]
+  },
+
+  updateComment (parent, args, {db}, info){
+
+    const {data, id} = args;
+    console.log('args', args)
+    
+    const comment = db.comments.find((comment) => comment.id === id)
+
+    console.log('comment', comment)
+
+    if (!comment) {
+      throw new error ('COmment not found')
+    }
+
+    if (typeof data.text === 'string') {
+      comment.text = data.text
+    }
+
+    return comment
   }
 }
 
