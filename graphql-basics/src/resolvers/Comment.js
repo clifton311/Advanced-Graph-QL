@@ -8,7 +8,7 @@ const  Comment = {
 
   posts (parent, args, {db}, info) {
     return db.posts.find((post) => {
-      console.log('post',post)
+      console.log('parent', parent)
       return post.id === parent.post
     })
   }
