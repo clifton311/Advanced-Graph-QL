@@ -1,5 +1,4 @@
-const Query =
-  {
+const Query = {
     users (parent, args, {db}, info){
       if (!args.query) {
         return db.users

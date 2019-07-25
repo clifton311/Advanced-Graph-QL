@@ -20,9 +20,10 @@ const server = new GraphQLServer({
     Post,
     Comment
   },
-//easy to share across all resolver methods
+
+  //easy to share across all resolver methods
   context: {
-      db:db,
+      db,
       pubsub
   }
 })

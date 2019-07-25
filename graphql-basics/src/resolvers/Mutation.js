@@ -90,7 +90,7 @@ const Mutation = {
     return user
   },
 
-  createPost (parent, args, {db}, info) {
+  createPost (parent, args, {db, pubsub}, info) {
     //make sure author ID matches users
     const userExists = db.users.some((user) => user.id === args.data.author)
 
@@ -106,8 +106,12 @@ const Mutation = {
       // author: args.author
       ...args.data
     }
-
     db.posts.push(post)
+
+    if (args.data.published) {
+      pubsub.publish(`post`, {post:post})
+    }
+
     return post
   },
 
@@ -133,7 +137,7 @@ const Mutation = {
     return deleted[0]
   },
 
-  updatePost (parent, args, {db}, info) {
+  updatePost (parent, args, {db, pubsub}, info) {
     const {data, id} = args;
     //find returns the post element
     const post = db.posts.find((post) => post.id === id)
@@ -155,17 +159,21 @@ const Mutation = {
     if (typeof data.published === 'boolean') {
       post.published = data.published
     }
-  
+    
     return post
   },
  
   createComment (parent, args, {db, pubsub}, info) {
+
     const userExists = db.users.some((user) => {
       return user.id === args.data.author
     })
+
     const postExists = db.posts.some((post) =>  {
       return post.id === args.data.post && post.published === true
     })
+
+    console.log(userExists, postExists,args.data.post )
 
     if (!userExists || !postExists) {
         throw new Error('User or Post Does not Exist')
@@ -185,7 +193,7 @@ const Mutation = {
     return comment
   },
 
-  deleteComment(parent,args,{db}, info) {
+  deleteComment(parent,args, {db} , info) {
     const commmentIndex = db.comments.findIndex((comment) => {
       return comment.id === args.id   
     })
